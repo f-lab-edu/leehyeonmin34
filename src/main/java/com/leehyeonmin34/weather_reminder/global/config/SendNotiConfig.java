@@ -1,7 +1,7 @@
 package com.leehyeonmin34.weather_reminder.global.config;
 
 import com.leehyeonmin34.weather_reminder.domain.notification.domain.Notification;
-import com.leehyeonmin34.weather_reminder.domain.notification.repository.NotificationRepository;
+import com.leehyeonmin34.weather_reminder.domain.notification.service.common.repository.NotificationRepository;
 import com.leehyeonmin34.weather_reminder.domain.notification.service.common.NotiGeneratorAndSender;
 import com.leehyeonmin34.weather_reminder.domain.user.domain.User;
 import com.leehyeonmin34.weather_reminder.domain.user.repository.UserRepository;
@@ -34,7 +34,7 @@ public class SendNotiConfig {
         log.info("********** This is sendNotiJob");
         return jobBuilderFactory.get("sendNotiJob")
                 .preventRestart() // 이 job의 중복실행 방지
-                .start(sendNotiJobStep)
+                .start(sendNotiJobStep) // 이 잡이 실행될 때 실행할 첫번째 Step
                 .build();
     }
 
@@ -42,10 +42,10 @@ public class SendNotiConfig {
     public Step sendNotiJobStep(StepBuilderFactory stepBuilderFactory){
         log.info("********** This is sendNotiJobStep");
         return stepBuilderFactory.get("sendNotiJob")
-                .<User, Notification> chunk(100)
-                .reader(sendNotiReader())
-                .processor(sendNotiProcessor(notiGeneratorAndSender))
-                .writer(sendNotiWriter())
+                .<User, Notification> chunk(100) // 한 번에 처리할 item 양(갯수)
+                .reader(sendNotiReader()) // Batch 처리할 데이터를 읽어올 reader
+                .processor(sendNotiProcessor(notiGeneratorAndSender)) // 처리
+                .writer(sendNotiWriter()) // 처리된 결과를 writer
                 .build();
     }
 

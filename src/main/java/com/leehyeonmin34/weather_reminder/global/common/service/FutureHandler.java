@@ -8,11 +8,10 @@ import java.util.stream.Collectors;
 
 @Component
 public class FutureHandler {
-
     public <T> List<T> joinFutureList(List<CompletableFuture<T>> futureList){
         //future 리스트를 순회하며 join
         return futureList.stream().map(CompletableFuture::join).collect(Collectors.toUnmodifiableList());
     }
-
-
 }
+
+
